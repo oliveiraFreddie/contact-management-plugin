@@ -40,5 +40,14 @@ function pone_register_menus() {
         'pone_add_contact_page',
         'pone_render_add_contact_page'
     );
+
+    add_submenu_page(
+        'pone_hello_page', 
+        'Editar/Excluir Contato',
+        'Editar/Excluir Contato',
+        'manage_options',
+        'pone_edit_delete_contact_page',
+        'pone_render_edit_delete_contact_page'
+    );
 }
 ?>
