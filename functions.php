@@ -4,9 +4,10 @@
 function pone_render_page() {
     ?>
     <div class="wrap">
-        <h2>Gerenciador de Contactos</h2>
-        <p>Bem-vindo ao Gerenciador de Contactos! Este plugin permite que você gerencie seus contatos de forma fácil e eficiente.</p>
-        <p>Você pode adicionar novos contatos e visualizar uma lista de contatos existentes.</p>
+        <h1>Gerenciador de Contactos</h1>
+        <h3>Bem-vindo ao Gerenciador de Contactos! Este plugin permite que você gerencie seus contatos de forma fácil.</h3>
+        <p>Você pode adicionar novos contatos, editar e excluir.</p>
+        <p>E visualizar uma lista de contatos existentes.</p>
     </div>
     <?php
 }
