@@ -121,4 +121,99 @@ if (isset($_POST['submit_contact'])) {
         echo '<div class="error"><p>O número de telefone inserido não é válido. Por favor, insira um número de telefone válido com 9 dígitos.</p></div>';
     }
 }
+
+// Lógica para excluir um contato
+if(isset($_POST['delete_contact'])) {
+    $contact_id = $_POST['contact_id'];
+    pone_delete_contact($contact_id);
+    // Exiba uma mensagem de sucesso
+    echo '<div class="updated"><p>Contato excluído com sucesso!</p></div>';
+}
+
+// Renderiza a página de edição/exclusão de contato
+function pone_render_edit_delete_contact_page() {
+    // Recuperar os contatos
+    $contacts = pone_get_contacts();
+    ?>
+    <div class="wrap">
+        <h2>Editar/Excluir Contato</h2>
+        <table class="wp-list-table widefat striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Contato</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($contacts as $contact) : ?>
+                    <tr>
+                        <td><?php echo $contact->id; ?></td>
+                        <td><?php echo $contact->name; ?></td>
+                        <td><?php echo $contact->contact_info; ?></td>
+                        <td>
+                            <form method="post" action="">
+                                <input type="hidden" name="contact_id" value="<?php echo $contact->id; ?>">
+                                <input type="text" name="new_name" placeholder="Novo Nome">
+                                <input type="text" name="new_contact_info" placeholder="Novo Contato">
+                                <button type="submit" name="edit_contact">Editar</button>
+                                <button type="submit" name="delete_contact">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+// Adicione um gancho para processar o formulário quando a página for carregada
+add_action('admin_init', 'pone_process_edit_delete_contact');
+
+// Editar um contato
+function pone_edit_contact($contact_id, $new_name, $new_contact_info) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'contacts';
+
+    $wpdb->update(
+        $table_name,
+        array(
+            'name' => $new_name,
+            'contact_info' => $new_contact_info
+        ),
+        array('id' => $contact_id)
+    );
+}
+
+// Excluir um contato
+function pone_delete_contact($contact_id) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'contacts';
+
+    $wpdb->delete(
+        $table_name,
+        array('id' => $contact_id)
+    );
+}
+
+// Lógica para editar um contato
+if(isset($_POST['edit_contact'])) {
+    $contact_id = $_POST['contact_id'];
+    $new_name = sanitize_text_field($_POST['new_name']);
+    $new_contact_info = sanitize_text_field($_POST['new_contact_info']);
+
+    // Valide o número de telefone
+    $validated_phone_number = pone_validate_phone_number($new_contact_info);
+
+    if ($validated_phone_number) {
+        pone_edit_contact($contact_id, $new_name, $validated_phone_number);
+        // Exiba uma mensagem de sucesso
+        echo '<div class="updated"><p>Contato editado com sucesso!</p></div>';
+    } else {
+        // Se o número de telefone não for válido, exiba uma mensagem de erro
+        echo '<div class="error"><p>O número de telefone inserido não é válido. Por favor, insira um número de telefone válido com 9 dígitos.</p></div>';
+    }
+}
 ?>
